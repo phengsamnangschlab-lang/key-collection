@@ -340,6 +340,9 @@ const joystickBase = document.querySelector('.joystick-base');
 function initializeJoystick() {
     if (!joystickBase || !joystickHandle) return;
 
+    // Update max distance based on screen size
+    joystickState.maxDistance = window.innerWidth <= 768 ? 45 : 35;
+
     const baseRect = joystickBase.getBoundingClientRect();
     joystickState.centerX = joystickBase.offsetWidth / 2;
     joystickState.centerY = joystickBase.offsetHeight / 2;
@@ -348,6 +351,11 @@ function initializeJoystick() {
     const handleSize = joystickHandle.offsetWidth / 2;
     joystickHandle.style.left = joystickState.centerX - handleSize + 'px';
     joystickHandle.style.top = joystickState.centerY - handleSize + 'px';
+
+    // Reset movement state
+    joystickState.currentX = 0;
+    joystickState.currentY = 0;
+    joystickState.isDragging = false;
 }
 
 function handleJoystickMove(clientX, clientY) {
@@ -392,16 +400,21 @@ function startContinuousMovement() {
         const magnitude = Math.sqrt(joystickState.currentX * joystickState.currentX + joystickState.currentY * joystickState.currentY);
 
         if (magnitude > joystickState.deadZone) {
-            const moveDistance = Math.min(gameState.gameWidth, gameState.gameHeight) * 0.025;
+            const moveDistance = Math.min(gameState.gameWidth, gameState.gameHeight) * 0.02;
             const speed = Math.min(1, (magnitude - joystickState.deadZone) / (1 - joystickState.deadZone));
-            const smoothedSpeed = speed * speed; // Quadratic easing for smoother feel
 
-            const finalX = joystickState.currentX * smoothedSpeed * moveDistance;
-            const finalY = joystickState.currentY * smoothedSpeed * moveDistance;
+            // Direct mapping without quadratic easing for more responsive feel
+            const finalX = joystickState.currentX * speed * moveDistance;
+            const finalY = joystickState.currentY * speed * moveDistance;
+
+            // Debug log to check values
+            if (Math.abs(joystickState.currentX) > 0.1 || Math.abs(joystickState.currentY) > 0.1) {
+                console.log(`Joystick: ${joystickState.currentX.toFixed(2)}, ${joystickState.currentY.toFixed(2)} -> Move: ${finalX.toFixed(2)}, ${finalY.toFixed(2)}`);
+            }
 
             movePlayer(finalX, finalY);
         }
-    }, 12); // ~83fps for smoother movement
+    }, 16); // 60fps
 }
 
 function stopContinuousMovement() {
@@ -415,7 +428,11 @@ function stopContinuousMovement() {
 }
 
 function resetJoystick() {
-    if (!joystickHandle) return;
+    if (!joystickHandle || !joystickBase) return;
+
+    // Recalculate center in case screen size changed
+    joystickState.centerX = joystickBase.offsetWidth / 2;
+    joystickState.centerY = joystickBase.offsetHeight / 2;
 
     const handleSize = joystickHandle.offsetWidth / 2;
     joystickHandle.style.left = joystickState.centerX - handleSize + 'px';
@@ -540,12 +557,12 @@ function handleMovement(direction) {
 
 startBtn.addEventListener('click', () => {
     startGame();
-    setTimeout(initializeJoystick, 100);
+    setTimeout(initializeJoystick, 200);
 });
 
 restartBtn.addEventListener('click', () => {
     resetGame();
-    setTimeout(initializeJoystick, 100);
+    setTimeout(initializeJoystick, 200);
 });
 
 window.addEventListener('load', () => {
@@ -557,6 +574,9 @@ window.addEventListener('load', () => {
 // Initialize joystick when game page becomes visible
 window.addEventListener('resize', () => {
     if (!gamePage.classList.contains('hidden')) {
-        setTimeout(initializeJoystick, 100);
+        updateGameDimensions();
+        setupObstacles();
+        setupKeys();
+        setTimeout(initializeJoystick, 200);
     }
 });
