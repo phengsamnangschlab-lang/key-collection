@@ -178,8 +178,8 @@ function checkCollision(newX, newY) {
 
 function checkKeyCollection(x, y) {
     const playerSize = window.innerWidth <= 768 ? 18 : 20;
-    const keySize = window.innerWidth <= 768 ? 40 : 50;
-    const revealDistance = window.innerWidth <= 768 ? 60 : 80; // Distance to auto-reveal keys
+    const keySize = window.innerWidth <= 768 ? 35 : 50;
+    const revealDistance = window.innerWidth <= 768 ? 50 : 80; // Distance to auto-reveal keys
 
     keys.forEach(key => {
         // Auto-reveal keys when player gets close
@@ -268,7 +268,7 @@ let joystickState = {
     isDragging: false,
     centerX: 0,
     centerY: 0,
-    maxDistance: 35,
+    maxDistance: window.innerWidth <= 768 ? 28 : 35,
     moveInterval: null,
     lastMoveTime: 0,
     currentX: 0,

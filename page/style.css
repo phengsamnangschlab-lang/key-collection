@@ -4,6 +4,8 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
 }
 
 .game-canvas {
@@ -156,6 +158,7 @@ body {
 
 #gamePage {
     height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
     width: 100vw;
 }
 
@@ -230,96 +233,123 @@ body {
 }
 
 @media (max-width: 768px) {
+    /* Fix viewport height issues */
+    body {
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100vh;
+        max-height: 100dvh;
+    }
+
+    #startPage, #gamePage {
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100vh;
+        max-height: 100dvh;
+        overflow: hidden;
+    }
+
     .player {
         width: 18px;
         height: 18px;
     }
 
     .key-container {
-        width: 40px;
-        height: 40px;
+        width: 35px;
+        height: 35px;
     }
 
     .cute-character {
-        font-size: 24px;
-        width: 40px;
-        height: 40px;
+        font-size: 20px;
+        width: 35px;
+        height: 35px;
     }
 
     .key {
-        width: 32px;
-        height: 32px;
-        font-size: 16px;
-        top: 4px;
-        left: 4px;
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+        top: 3.5px;
+        left: 3.5px;
     }
 
     .joystick-controls {
         display: flex;
+        bottom: 10px;
+        left: 10px;
     }
 
     .joystick-container {
-        width: 100px;
-        height: 100px;
+        width: 90px;
+        height: 90px;
     }
 
     .joystick-base {
-        width: 80px;
-        height: 80px;
+        width: 70px;
+        height: 70px;
     }
 
     .joystick-handle {
-        width: 32px;
-        height: 32px;
+        width: 28px;
+        height: 28px;
     }
 
     /* Start screen mobile optimization */
     .game-icon {
-        font-size: 3rem !important;
+        font-size: 2.5rem !important;
     }
 
     h1 {
-        font-size: 2rem !important;
+        font-size: 1.75rem !important;
     }
 
     .text-lg {
-        font-size: 1rem !important;
+        font-size: 0.9rem !important;
     }
 
     .px-8 {
-        padding-left: 1.5rem !important;
-        padding-right: 1.5rem !important;
+        padding-left: 1.25rem !important;
+        padding-right: 1.25rem !important;
     }
 
     .py-4 {
-        padding-top: 0.75rem !important;
-        padding-bottom: 0.75rem !important;
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
     }
 
     .text-xl {
-        font-size: 1.125rem !important;
+        font-size: 1rem !important;
     }
 
-    /* Additional mobile spacing */
+    /* Tighter mobile spacing */
     #startPage {
-        padding: 2rem 1rem !important;
+        padding: 1rem 1rem !important;
     }
 
     #startPage .text-center {
-        margin-bottom: 2rem !important;
-    }
-
-    .mb-4 {
-        margin-bottom: 1rem !important;
-    }
-
-    .mb-8 {
         margin-bottom: 1.5rem !important;
     }
 
+    .mb-4 {
+        margin-bottom: 0.75rem !important;
+    }
+
+    .mb-8 {
+        margin-bottom: 1rem !important;
+    }
+
     /* Game area mobile optimization */
-    #gamePage .p-4 {
-        padding: 0.75rem !important;
+    #gamePage .flex.justify-between.items-center {
+        padding: 0.5rem !important;
+        min-height: auto;
+    }
+
+    .text-2xl {
+        font-size: 1.25rem !important;
+    }
+
+    .flex.gap-4 {
+        gap: 0.75rem !important;
     }
 
     .text-xs {
@@ -329,6 +359,13 @@ body {
     /* Hide bottom instruction text on mobile */
     .p-2.bg-white.border-t-2.border-black {
         display: none !important;
+    }
+
+    /* Ensure game area takes remaining space */
+    #gameArea {
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
     }
 }
 
