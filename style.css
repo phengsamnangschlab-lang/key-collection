@@ -351,9 +351,11 @@ body {
     }
 
     #gamePage .flex.justify-between.items-center {
-        padding: 0.5rem !important;
-        min-height: auto;
+        padding: 0.75rem 0.5rem !important;
+        min-height: 50px;
         flex-shrink: 0;
+        align-items: center;
+        display: flex;
     }
 
     .text-2xl {
@@ -364,11 +366,6 @@ body {
         gap: 0.5rem !important;
     }
 
-    /* Make keys display smaller in header */
-    #keysCollected {
-        font-size: 0.875rem !important;
-        font-weight: normal !important;
-    }
 
     .text-xs {
         font-size: 0.75rem !important;
@@ -385,7 +382,7 @@ body {
         min-height: 0;
         overflow: hidden;
         /* Account for header - use smaller calculation for mobile */
-        height: calc(100% - 50px);
+        height: calc(100% - 60px);
         position: relative;
     }
 

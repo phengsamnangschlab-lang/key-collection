@@ -13,7 +13,6 @@ const startBtn = document.getElementById('startBtn');
 const startPage = document.getElementById('startPage');
 const gamePage = document.getElementById('gamePage');
 const keyCount = document.getElementById('keyCount');
-const keysCollected = document.getElementById('keysCollected');
 const winMessage = document.getElementById('winMessage');
 const restartBtn = document.getElementById('restartBtn');
 const gameArea = document.getElementById('gameArea');
@@ -159,7 +158,6 @@ function updatePlayerPosition() {
 
 function updateUI() {
     keyCount.textContent = `${gameState.keysCollected.length}/3`;
-    keysCollected.textContent = gameState.keysCollected.join(' ');
 
     if (gameState.keysCollected.length === 3) {
         setTimeout(() => {
@@ -192,31 +190,37 @@ function checkCollision(newX, newY) {
 function checkKeyCollection(x, y) {
     const playerSize = window.innerWidth <= 768 ? 18 : 20;
     const keySize = window.innerWidth <= 768 ? 40 : 50;
-    const revealDistance = window.innerWidth <= 768 ? 60 : 80; // Distance to auto-reveal keys
+    const revealDistance = window.innerWidth <= 768 ? 60 : 80;
+    const collectDistance = window.innerWidth <= 768 ? 35 : 45; // Improved collection distance
 
     keys.forEach(key => {
-        // Auto-reveal keys when player gets close
-        if (!key.revealed) {
-            const distanceX = Math.abs(x + playerSize/2 - (key.x + keySize/2));
-            const distanceY = Math.abs(y + playerSize/2 - (key.y + keySize/2));
-            const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+        const keyElement = document.getElementById(key.id);
+        if (!keyElement) return;
 
-            if (distance < revealDistance) {
-                revealKey(key.id);
-            }
+        const playerCenterX = x + playerSize / 2;
+        const playerCenterY = y + playerSize / 2;
+        const keyCenterX = key.x + keySize / 2;
+        const keyCenterY = key.y + keySize / 2;
+
+        const distanceX = Math.abs(playerCenterX - keyCenterX);
+        const distanceY = Math.abs(playerCenterY - keyCenterY);
+        const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+        // Auto-reveal keys when player gets close
+        if (!key.revealed && distance < revealDistance) {
+            revealKey(key.id);
         }
 
-        // Collect keys when player touches them
+        // Improved collision detection - use circular collision for smoother feel
         if (!gameState.keysCollected.includes(key.letter) && key.revealed) {
-            if (x < key.x + keySize && x + playerSize > key.x &&
-                y < key.y + keySize && y + playerSize > key.y) {
+            if (distance < collectDistance) {
                 gameState.keysCollected.push(key.letter);
 
                 const keyContainer = document.getElementById(key.id);
-                const keyElement = keyContainer.querySelector('.key');
+                const keyElementDOM = keyContainer.querySelector('.key');
 
                 keyContainer.classList.add('collected');
-                keyElement.classList.add('collected');
+                keyElementDOM.classList.add('collected');
                 updateUI();
             }
         }
@@ -227,11 +231,52 @@ function movePlayer(dx, dy) {
     const newX = gameState.playerX + dx;
     const newY = gameState.playerY + dy;
 
+    // Try to move to the new position first
     if (!checkCollision(newX, newY)) {
+        // For fast movements, check collision detection at intermediate points
+        const steps = Math.max(Math.abs(dx), Math.abs(dy)) > 15 ? 3 : 1;
+
+        for (let i = 1; i <= steps; i++) {
+            const intermediateX = gameState.playerX + (dx * i / steps);
+            const intermediateY = gameState.playerY + (dy * i / steps);
+            checkKeyCollection(intermediateX, intermediateY);
+        }
+
         gameState.playerX = newX;
         gameState.playerY = newY;
         updatePlayerPosition();
         checkKeyCollection(newX, newY);
+    } else {
+        // If diagonal movement is blocked, try moving along each axis separately
+        const onlyX = gameState.playerX + dx;
+        const onlyY = gameState.playerY + dy;
+
+        // Try horizontal movement only
+        if (dx !== 0 && !checkCollision(onlyX, gameState.playerY)) {
+            gameState.playerX = onlyX;
+            updatePlayerPosition();
+            checkKeyCollection(onlyX, gameState.playerY);
+        }
+        // Try vertical movement only
+        else if (dy !== 0 && !checkCollision(gameState.playerX, onlyY)) {
+            gameState.playerY = onlyY;
+            updatePlayerPosition();
+            checkKeyCollection(gameState.playerX, onlyY);
+        }
+        // If both fail, try smaller incremental movements to prevent complete sticking
+        else {
+            const smallDx = dx * 0.5;
+            const smallDy = dy * 0.5;
+            const smallNewX = gameState.playerX + smallDx;
+            const smallNewY = gameState.playerY + smallDy;
+
+            if (!checkCollision(smallNewX, smallNewY)) {
+                gameState.playerX = smallNewX;
+                gameState.playerY = smallNewY;
+                updatePlayerPosition();
+                checkKeyCollection(smallNewX, smallNewY);
+            }
+        }
     }
 }
 
@@ -285,7 +330,8 @@ let joystickState = {
     moveInterval: null,
     lastMoveTime: 0,
     currentX: 0,
-    currentY: 0
+    currentY: 0,
+    deadZone: 0.15
 };
 
 const joystickHandle = document.getElementById('joystickHandle');
@@ -324,12 +370,15 @@ function handleJoystickMove(clientX, clientY) {
         handleY = joystickState.centerY + Math.sin(angle) * joystickState.maxDistance;
     }
 
-    // Update handle position immediately
+    // Smooth interpolation to reduce jittering
     const handleSize = joystickHandle.offsetWidth / 2;
-    joystickHandle.style.left = handleX - handleSize + 'px';
-    joystickHandle.style.top = handleY - handleSize + 'px';
+    const smoothX = handleX - handleSize;
+    const smoothY = handleY - handleSize;
 
-    // Store current position for continuous movement
+    joystickHandle.style.left = smoothX + 'px';
+    joystickHandle.style.top = smoothY + 'px';
+
+    // Store normalized position for continuous movement
     joystickState.currentX = (handleX - joystickState.centerX) / joystickState.maxDistance;
     joystickState.currentY = (handleY - joystickState.centerY) / joystickState.maxDistance;
 }
@@ -342,16 +391,17 @@ function startContinuousMovement() {
 
         const magnitude = Math.sqrt(joystickState.currentX * joystickState.currentX + joystickState.currentY * joystickState.currentY);
 
-        if (magnitude > 0.1) {
-            const moveDistance = Math.min(gameState.gameWidth, gameState.gameHeight) * 0.03;
-            const speed = Math.min(1, magnitude);
+        if (magnitude > joystickState.deadZone) {
+            const moveDistance = Math.min(gameState.gameWidth, gameState.gameHeight) * 0.025;
+            const speed = Math.min(1, (magnitude - joystickState.deadZone) / (1 - joystickState.deadZone));
+            const smoothedSpeed = speed * speed; // Quadratic easing for smoother feel
 
-            const finalX = joystickState.currentX * speed * moveDistance;
-            const finalY = joystickState.currentY * speed * moveDistance;
+            const finalX = joystickState.currentX * smoothedSpeed * moveDistance;
+            const finalY = joystickState.currentY * smoothedSpeed * moveDistance;
 
             movePlayer(finalX, finalY);
         }
-    }, 16); // ~60fps
+    }, 12); // ~83fps for smoother movement
 }
 
 function stopContinuousMovement() {
