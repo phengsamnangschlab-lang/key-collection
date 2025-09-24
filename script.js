@@ -107,12 +107,19 @@ function startGame() {
 }
 
 function resetGame() {
+    // Reset player position
     gameState.playerX = 50;
     gameState.playerY = 50;
     gameState.keysCollected = [];
+
+    // Stop any ongoing movement
+    stopContinuousMovement();
+
+    // Update player position and UI
     updatePlayerPosition();
     updateUI();
 
+    // Reset all keys
     keys.forEach(key => {
         const keyContainer = document.getElementById(key.id);
         const keyElement = keyContainer.querySelector('.key');
@@ -124,7 +131,13 @@ function resetGame() {
         key.revealed = false;
     });
 
+    // Hide win message
     winMessage.classList.add('hidden');
+
+    // Reset joystick state
+    joystickState.isDragging = false;
+    joystickState.currentX = 0;
+    joystickState.currentY = 0;
 }
 
 function revealKey(keyId) {
@@ -268,7 +281,7 @@ let joystickState = {
     isDragging: false,
     centerX: 0,
     centerY: 0,
-    maxDistance: window.innerWidth <= 768 ? 32 : 35,
+    maxDistance: window.innerWidth <= 768 ? 45 : 35,
     moveInterval: null,
     lastMoveTime: 0,
     currentX: 0,
@@ -348,6 +361,7 @@ function stopContinuousMovement() {
     }
     joystickState.currentX = 0;
     joystickState.currentY = 0;
+    joystickState.isDragging = false;
 }
 
 function resetJoystick() {
@@ -479,7 +493,10 @@ startBtn.addEventListener('click', () => {
     setTimeout(initializeJoystick, 100);
 });
 
-restartBtn.addEventListener('click', resetGame);
+restartBtn.addEventListener('click', () => {
+    resetGame();
+    setTimeout(initializeJoystick, 100);
+});
 
 window.addEventListener('load', () => {
     if (!startPage.classList.contains('hidden')) return;
