@@ -33,6 +33,10 @@ body {
     width: 50px;
     height: 50px;
     z-index: 5;
+    /* Ensure containers don't overflow */
+    max-width: 50px;
+    max-height: 50px;
+    overflow: hidden;
 }
 
 .cute-character {
@@ -255,101 +259,108 @@ body {
     }
 
     .key-container {
-        width: 35px;
-        height: 35px;
+        width: 40px;
+        height: 40px;
     }
 
     .cute-character {
-        font-size: 20px;
-        width: 35px;
-        height: 35px;
+        font-size: 24px;
+        width: 40px;
+        height: 40px;
     }
 
     .key {
-        width: 28px;
-        height: 28px;
-        font-size: 14px;
-        top: 3.5px;
-        left: 3.5px;
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+        top: 4px;
+        left: 4px;
     }
 
     .joystick-controls {
         display: flex;
-        bottom: 10px;
-        left: 10px;
+        bottom: 15px;
+        left: 15px;
     }
 
     .joystick-container {
-        width: 90px;
-        height: 90px;
+        width: 100px;
+        height: 100px;
     }
 
     .joystick-base {
-        width: 70px;
-        height: 70px;
+        width: 80px;
+        height: 80px;
     }
 
     .joystick-handle {
-        width: 28px;
-        height: 28px;
+        width: 32px;
+        height: 32px;
     }
 
     /* Start screen mobile optimization */
     .game-icon {
-        font-size: 2.5rem !important;
+        font-size: 3rem !important;
     }
 
     h1 {
-        font-size: 1.75rem !important;
+        font-size: 2rem !important;
     }
 
     .text-lg {
-        font-size: 0.9rem !important;
-    }
-
-    .px-8 {
-        padding-left: 1.25rem !important;
-        padding-right: 1.25rem !important;
-    }
-
-    .py-4 {
-        padding-top: 0.5rem !important;
-        padding-bottom: 0.5rem !important;
-    }
-
-    .text-xl {
         font-size: 1rem !important;
     }
 
-    /* Tighter mobile spacing */
+    .px-8 {
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+
+    .py-4 {
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+    }
+
+    .text-xl {
+        font-size: 1.125rem !important;
+    }
+
+    /* Mobile spacing */
     #startPage {
-        padding: 1rem 1rem !important;
+        padding: 1.5rem 1rem !important;
     }
 
     #startPage .text-center {
-        margin-bottom: 1.5rem !important;
+        margin-bottom: 1.75rem !important;
     }
 
     .mb-4 {
-        margin-bottom: 0.75rem !important;
-    }
-
-    .mb-8 {
         margin-bottom: 1rem !important;
     }
 
+    .mb-8 {
+        margin-bottom: 1.25rem !important;
+    }
+
     /* Game area mobile optimization */
+    #gamePage {
+        /* Use environment variables for safe areas */
+        height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    }
+
     #gamePage .flex.justify-between.items-center {
-        padding: 0.5rem !important;
+        padding: 0.75rem !important;
         min-height: auto;
+        flex-shrink: 0;
     }
 
     .text-2xl {
-        font-size: 1.25rem !important;
+        font-size: 1.5rem !important;
     }
 
     .flex.gap-4 {
-        gap: 0.75rem !important;
+        gap: 1rem !important;
     }
 
     .text-xs {
@@ -361,11 +372,20 @@ body {
         display: none !important;
     }
 
-    /* Ensure game area takes remaining space */
+    /* Ensure game area takes remaining space properly */
     #gameArea {
         flex: 1;
         min-height: 0;
         overflow: hidden;
+        /* Account for header */
+        height: calc(100% - 60px);
+        position: relative;
+    }
+
+    /* Ensure all game elements stay within bounds */
+    .key-container {
+        max-width: 40px !important;
+        max-height: 40px !important;
     }
 }
 
