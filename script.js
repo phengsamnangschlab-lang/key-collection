@@ -400,7 +400,7 @@ function startContinuousMovement() {
         const magnitude = Math.sqrt(joystickState.currentX * joystickState.currentX + joystickState.currentY * joystickState.currentY);
 
         if (magnitude > joystickState.deadZone) {
-            const moveDistance = Math.min(gameState.gameWidth, gameState.gameHeight) * 0.02;
+            const moveDistance = Math.min(gameState.gameWidth, gameState.gameHeight) * 0.01;
             const speed = Math.min(1, (magnitude - joystickState.deadZone) / (1 - joystickState.deadZone));
 
             // Direct mapping without quadratic easing for more responsive feel
