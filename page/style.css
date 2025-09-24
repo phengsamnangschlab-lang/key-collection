@@ -237,19 +237,19 @@ body {
 }
 
 @media (max-width: 768px) {
-    /* Fix viewport height issues */
+    /* Fix viewport height issues - account for browser UI */
     body {
         height: 100vh;
-        height: 100dvh;
+        height: 100svh; /* Small viewport height - excludes browser UI */
         max-height: 100vh;
-        max-height: 100dvh;
+        max-height: 100svh;
     }
 
     #startPage, #gamePage {
         height: 100vh;
-        height: 100dvh;
+        height: 100svh; /* Small viewport height - excludes browser UI */
         max-height: 100vh;
-        max-height: 100dvh;
+        max-height: 100svh;
         overflow: hidden;
     }
 
@@ -344,9 +344,9 @@ body {
 
     /* Game area mobile optimization */
     #gamePage {
-        /* Use environment variables for safe areas */
-        height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-        height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        /* Use small viewport height to account for browser UI */
+        height: 100svh !important;
+        max-height: 100svh !important;
     }
 
     #gamePage .flex.justify-between.items-center {
@@ -377,8 +377,8 @@ body {
         flex: 1;
         min-height: 0;
         overflow: hidden;
-        /* Account for header */
-        height: calc(100% - 60px);
+        /* Account for header - use smaller calculation for mobile */
+        height: calc(100% - 50px);
         position: relative;
     }
 
