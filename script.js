@@ -177,9 +177,9 @@ function checkCollision(newX, newY) {
 }
 
 function checkKeyCollection(x, y) {
-    const playerSize = 20;
-    const keySize = 50;
-    const revealDistance = 80; // Distance to auto-reveal keys
+    const playerSize = window.innerWidth <= 768 ? 18 : 20;
+    const keySize = window.innerWidth <= 768 ? 40 : 50;
+    const revealDistance = window.innerWidth <= 768 ? 60 : 80; // Distance to auto-reveal keys
 
     keys.forEach(key => {
         // Auto-reveal keys when player gets close
@@ -268,9 +268,11 @@ let joystickState = {
     isDragging: false,
     centerX: 0,
     centerY: 0,
-    maxDistance: 40,
+    maxDistance: window.innerWidth <= 768 ? 32 : 35,
     moveInterval: null,
-    lastMoveTime: 0
+    lastMoveTime: 0,
+    currentX: 0,
+    currentY: 0
 };
 
 const joystickHandle = document.getElementById('joystickHandle');
@@ -290,9 +292,7 @@ function initializeJoystick() {
 }
 
 function handleJoystickMove(clientX, clientY) {
-    const now = performance.now();
-    if (now - joystickState.lastMoveTime < 16) return; // Limit to ~60fps
-    joystickState.lastMoveTime = now;
+    if (!joystickState.isDragging) return;
 
     const baseRect = joystickBase.getBoundingClientRect();
     const deltaX = clientX - baseRect.left - joystickState.centerX;
@@ -300,44 +300,54 @@ function handleJoystickMove(clientX, clientY) {
 
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-    let handleX, handleY, actualDistance;
+    let handleX, handleY;
 
     if (distance <= joystickState.maxDistance) {
         handleX = joystickState.centerX + deltaX;
         handleY = joystickState.centerY + deltaY;
-        actualDistance = distance;
     } else {
         const angle = Math.atan2(deltaY, deltaX);
         handleX = joystickState.centerX + Math.cos(angle) * joystickState.maxDistance;
         handleY = joystickState.centerY + Math.sin(angle) * joystickState.maxDistance;
-        actualDistance = joystickState.maxDistance;
     }
 
+    // Update handle position immediately
     const handleSize = joystickHandle.offsetWidth / 2;
     joystickHandle.style.left = handleX - handleSize + 'px';
     joystickHandle.style.top = handleY - handleSize + 'px';
 
-    // Calculate movement with better sensitivity
-    const normalizedX = (handleX - joystickState.centerX) / joystickState.maxDistance;
-    const normalizedY = (handleY - joystickState.centerY) / joystickState.maxDistance;
+    // Store current position for continuous movement
+    joystickState.currentX = (handleX - joystickState.centerX) / joystickState.maxDistance;
+    joystickState.currentY = (handleY - joystickState.centerY) / joystickState.maxDistance;
+}
 
-    // Apply deadzone and smooth curve
-    const deadzone = 0.15;
-    const magnitude = Math.sqrt(normalizedX * normalizedX + normalizedY * normalizedY);
+function startContinuousMovement() {
+    if (joystickState.moveInterval) return;
 
-    if (magnitude > deadzone) {
-        const adjustedMagnitude = Math.min(1, (magnitude - deadzone) / (1 - deadzone));
-        const smoothMagnitude = adjustedMagnitude * adjustedMagnitude; // Square for smooth acceleration
+    joystickState.moveInterval = setInterval(() => {
+        if (!joystickState.isDragging) return;
 
-        const dirX = normalizedX / magnitude;
-        const dirY = normalizedY / magnitude;
+        const magnitude = Math.sqrt(joystickState.currentX * joystickState.currentX + joystickState.currentY * joystickState.currentY);
 
-        const moveDistance = Math.min(gameState.gameWidth, gameState.gameHeight) * 0.025;
-        const finalX = dirX * smoothMagnitude * moveDistance;
-        const finalY = dirY * smoothMagnitude * moveDistance;
+        if (magnitude > 0.1) {
+            const moveDistance = Math.min(gameState.gameWidth, gameState.gameHeight) * 0.03;
+            const speed = Math.min(1, magnitude);
 
-        movePlayer(finalX, finalY);
+            const finalX = joystickState.currentX * speed * moveDistance;
+            const finalY = joystickState.currentY * speed * moveDistance;
+
+            movePlayer(finalX, finalY);
+        }
+    }, 16); // ~60fps
+}
+
+function stopContinuousMovement() {
+    if (joystickState.moveInterval) {
+        clearInterval(joystickState.moveInterval);
+        joystickState.moveInterval = null;
     }
+    joystickState.currentX = 0;
+    joystickState.currentY = 0;
 }
 
 function resetJoystick() {
@@ -348,10 +358,7 @@ function resetJoystick() {
     joystickHandle.style.top = joystickState.centerY - handleSize + 'px';
     joystickHandle.classList.remove('dragging');
 
-    if (joystickState.moveInterval) {
-        clearInterval(joystickState.moveInterval);
-        joystickState.moveInterval = null;
-    }
+    stopContinuousMovement();
 }
 
 // Mouse events for joystick
@@ -359,10 +366,12 @@ joystickHandle.addEventListener('mousedown', (e) => {
     e.preventDefault();
     joystickState.isDragging = true;
     joystickHandle.classList.add('dragging');
+    startContinuousMovement();
 });
 
 document.addEventListener('mousemove', (e) => {
     if (joystickState.isDragging) {
+        e.preventDefault();
         handleJoystickMove(e.clientX, e.clientY);
     }
 });
@@ -379,16 +388,25 @@ joystickHandle.addEventListener('touchstart', (e) => {
     e.preventDefault();
     joystickState.isDragging = true;
     joystickHandle.classList.add('dragging');
+    startContinuousMovement();
 });
 
 document.addEventListener('touchmove', (e) => {
-    if (joystickState.isDragging) {
+    if (joystickState.isDragging && e.touches[0]) {
+        e.preventDefault();
         const touch = e.touches[0];
         handleJoystickMove(touch.clientX, touch.clientY);
     }
 }, { passive: false });
 
 document.addEventListener('touchend', (e) => {
+    if (joystickState.isDragging) {
+        joystickState.isDragging = false;
+        resetJoystick();
+    }
+});
+
+document.addEventListener('touchcancel', (e) => {
     if (joystickState.isDragging) {
         joystickState.isDragging = false;
         resetJoystick();

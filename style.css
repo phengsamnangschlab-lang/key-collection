@@ -4,6 +4,8 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
 }
 
 .game-canvas {
@@ -31,10 +33,12 @@ body {
     width: 50px;
     height: 50px;
     z-index: 5;
+    /* Allow characters to display fully */
+    overflow: visible;
 }
 
 .cute-character {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: bold;
     position: absolute;
     top: 0;
@@ -51,6 +55,8 @@ body {
     color: black;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
+    line-height: 1;
+    overflow: visible;
 }
 
 .cute-character:hover {
@@ -156,6 +162,7 @@ body {
 
 #gamePage {
     height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
     width: 100vw;
 }
 
@@ -226,48 +233,161 @@ body {
     transition: none;
     cursor: grabbing;
     transform: scale(0.95);
+    will-change: transform, left, top;
 }
 
 @media (max-width: 768px) {
+    /* Fix viewport height issues - account for browser UI */
+    body {
+        height: 100vh;
+        height: 100svh; /* Small viewport height - excludes browser UI */
+        max-height: 100vh;
+        max-height: 100svh;
+    }
+
+    #startPage, #gamePage {
+        height: 100vh;
+        height: 100svh; /* Small viewport height - excludes browser UI */
+        max-height: 100vh;
+        max-height: 100svh;
+        overflow: hidden;
+    }
+
     .player {
-        width: 25px;
-        height: 25px;
+        width: 18px;
+        height: 18px;
     }
 
     .key-container {
-        width: 55px;
-        height: 55px;
+        width: 40px;
+        height: 40px;
     }
 
     .cute-character {
-        font-size: 45px;
-        width: 55px;
-        height: 55px;
+        font-size: 20px;
+        width: 40px;
+        height: 40px;
+        line-height: 1;
     }
 
     .key {
-        width: 45px;
-        height: 45px;
-        font-size: 20px;
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+        top: 4px;
+        left: 4px;
     }
 
     .joystick-controls {
         display: flex;
+        bottom: 15px;
+        left: 15px;
     }
 
     .joystick-container {
-        width: 140px;
-        height: 140px;
+        width: 100px;
+        height: 100px;
     }
 
     .joystick-base {
-        width: 120px;
-        height: 120px;
+        width: 80px;
+        height: 80px;
     }
 
     .joystick-handle {
-        width: 50px;
-        height: 50px;
+        width: 32px;
+        height: 32px;
+    }
+
+    /* Start screen mobile optimization */
+    .game-icon {
+        font-size: 3rem !important;
+    }
+
+    h1 {
+        font-size: 2rem !important;
+    }
+
+    .text-lg {
+        font-size: 1rem !important;
+    }
+
+    .px-8 {
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+
+    .py-4 {
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+    }
+
+    .text-xl {
+        font-size: 1.125rem !important;
+    }
+
+    /* Mobile spacing */
+    #startPage {
+        padding: 1.5rem 1rem !important;
+    }
+
+    #startPage .text-center {
+        margin-bottom: 1.75rem !important;
+    }
+
+    .mb-4 {
+        margin-bottom: 1rem !important;
+    }
+
+    .mb-8 {
+        margin-bottom: 1.25rem !important;
+    }
+
+    /* Game area mobile optimization */
+    #gamePage {
+        /* Use small viewport height to account for browser UI */
+        height: 100svh !important;
+        max-height: 100svh !important;
+    }
+
+    #gamePage .flex.justify-between.items-center {
+        padding: 0.75rem !important;
+        min-height: auto;
+        flex-shrink: 0;
+    }
+
+    .text-2xl {
+        font-size: 1.5rem !important;
+    }
+
+    .flex.gap-4 {
+        gap: 1rem !important;
+    }
+
+    .text-xs {
+        font-size: 0.75rem !important;
+    }
+
+    /* Hide bottom instruction text on mobile */
+    .p-2.bg-white.border-t-2.border-black {
+        display: none !important;
+    }
+
+    /* Ensure game area takes remaining space properly */
+    #gameArea {
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+        /* Account for header - use smaller calculation for mobile */
+        height: calc(100% - 50px);
+        position: relative;
+    }
+
+    /* Ensure all game elements stay within bounds but allow character overflow */
+    .key-container {
+        width: 40px !important;
+        height: 40px !important;
+        overflow: visible !important;
     }
 }
 
