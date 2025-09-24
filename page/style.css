@@ -1,0 +1,287 @@
+body {
+    background-color: white;
+    color: black;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.game-canvas {
+    border: 2px solid black;
+    position: relative;
+}
+
+.player {
+    width: 20px;
+    height: 20px;
+    background-color: black;
+    position: absolute;
+    transition: all 0.1s ease;
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.obstacle {
+    background-color: black;
+    position: absolute;
+}
+
+.key-container {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    z-index: 5;
+}
+
+.cute-character {
+    font-size: 32px;
+    font-weight: bold;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    animation: bounce 2s infinite ease-in-out;
+    transition: all 0.3s ease;
+    z-index: 10;
+    color: black;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.cute-character:hover {
+    transform: scale(1.1);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.cute-character:active {
+    transform: scale(0.95);
+}
+
+.game-icon {
+    animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.key {
+    background-color: white;
+    color: black;
+    position: absolute;
+    font-weight: bold;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid black;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    z-index: 5;
+    box-shadow: 0 0 0 2px white, 0 0 0 4px black;
+    top: 5px;
+    left: 5px;
+    transition: all 0.5s ease;
+}
+
+.key.hidden {
+    opacity: 0;
+    transform: scale(0);
+}
+
+.key.revealed {
+    opacity: 1 !important;
+    background-color: white !important;
+    color: black !important;
+    transform: scale(1);
+    animation: keyGlow 2s infinite ease-in-out;
+}
+
+@keyframes keyGlow {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 2px white, 0 0 0 4px black;
+        background-color: white;
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 4px white, 0 0 0 6px black;
+        background-color: white;
+        opacity: 1;
+    }
+}
+
+.key.collected {
+    background-color: #f0f0f0;
+    color: #666;
+    animation: none;
+    transform: scale(0.8);
+    opacity: 0.5;
+}
+
+.key-container.collected .cute-character {
+    opacity: 0.3;
+    animation: none;
+}
+
+#startPage {
+    background: linear-gradient(45deg, white 25%, transparent 25%),
+                linear-gradient(-45deg, white 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, white 75%),
+                linear-gradient(-45deg, transparent 75%, white 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+#gamePage {
+    height: 100vh;
+    width: 100vw;
+}
+
+#gameArea {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.win-animation {
+    animation: celebrate 1s ease-in-out;
+}
+
+@keyframes celebrate {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.1) rotate(-5deg); }
+    75% { transform: scale(1.1) rotate(5deg); }
+}
+
+.joystick-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 100;
+}
+
+.joystick-container {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.joystick-base {
+    width: 100px;
+    height: 100px;
+    border: 3px solid black;
+    border-radius: 50%;
+    background: white;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.joystick-handle {
+    width: 40px;
+    height: 40px;
+    background: black;
+    border-radius: 50%;
+    position: absolute;
+    cursor: grab;
+    transition: all 0.05s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    touch-action: none;
+    user-select: none;
+}
+
+.joystick-handle:active {
+    cursor: grabbing;
+    transform: scale(0.95);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.joystick-handle.dragging {
+    transition: none;
+    cursor: grabbing;
+    transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+    .player {
+        width: 25px;
+        height: 25px;
+    }
+
+    .key-container {
+        width: 55px;
+        height: 55px;
+    }
+
+    .cute-character {
+        font-size: 45px;
+        width: 55px;
+        height: 55px;
+    }
+
+    .key {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+    }
+
+    .joystick-controls {
+        display: flex;
+    }
+
+    .joystick-container {
+        width: 140px;
+        height: 140px;
+    }
+
+    .joystick-base {
+        width: 120px;
+        height: 120px;
+    }
+
+    .joystick-handle {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+@media (min-width: 769px) {
+    .joystick-controls {
+        display: none;
+    }
+}
+
+.swipe-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}

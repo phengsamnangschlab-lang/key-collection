@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Collection Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-white text-black font-mono">
+    <!-- Start Page -->
+    <div id="startPage" class="h-screen flex flex-col items-center justify-center">
+        <div class="text-center mb-8">
+            <div class="text-6xl mb-4 game-icon">⚫</div>
+            <h1 class="text-4xl font-bold mb-4">Key Collection Game</h1>
+            <p class="text-lg mb-8">Collect the keys I, L, U to win!</p>
+            <button id="startBtn" class="bg-black text-white px-8 py-4 text-xl font-bold border-2 border-black hover:bg-white hover:text-black transition-colors">
+                START GAME
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Page -->
+    <div id="gamePage" class="hidden h-screen flex flex-col">
+        <div class="flex justify-between items-center p-4 bg-white border-b-2 border-black">
+            <h2 class="text-2xl font-bold">Collect All Keys!</h2>
+            <div class="flex gap-4">
+                <span>Keys: <span id="keyCount">0/3</span></span>
+                <span id="keysCollected" class="font-bold"></span>
+            </div>
+        </div>
+
+        <div id="gameArea" class="relative flex-1 game-canvas bg-white overflow-hidden">
+            <!-- Player -->
+            <div id="player" class="player"></div>
+
+            <!-- Obstacles -->
+            <div class="obstacle" data-obstacle="0"></div>
+            <div class="obstacle" data-obstacle="1"></div>
+            <div class="obstacle" data-obstacle="2"></div>
+            <div class="obstacle" data-obstacle="3"></div>
+            <div class="obstacle" data-obstacle="4"></div>
+            <div class="obstacle" data-obstacle="5"></div>
+            <div class="obstacle" data-obstacle="6"></div>
+            <div class="obstacle" data-obstacle="7"></div>
+
+            <!-- Keys hidden behind cute characters -->
+            <div id="keyI" class="key-container">
+                <div class="cute-character">◕‿◕</div>
+                <div class="key hidden">I</div>
+            </div>
+            <div id="keyL" class="key-container">
+                <div class="cute-character">◉‿◉</div>
+                <div class="key hidden">L</div>
+            </div>
+            <div id="keyU" class="key-container">
+                <div class="cute-character">●‿●</div>
+                <div class="key hidden">U</div>
+            </div>
+        </div>
+
+        <!-- Mobile Joystick Controls -->
+        <div id="joystickControls" class="joystick-controls">
+            <div class="joystick-container">
+                <div class="joystick-base">
+                    <div class="joystick-handle" id="joystickHandle"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-2 bg-white border-t-2 border-black">
+            <p class="text-xs text-center">Get close to cute characters to reveal keys! Use joystick or swipe to move</p>
+        </div>
+
+        <!-- Win Message -->
+        <div id="winMessage" class="hidden fixed inset-0 bg-white bg-opacity-90 flex items-center justify-center">
+            <div class="text-center">
+                <h2 class="text-4xl font-bold mb-4">Bravo Cutiee!</h2>
+                <p class="text-xl mb-4">I Love You</p>
+                <button id="restartBtn" class="bg-black text-white px-6 py-3 text-lg font-bold border-2 border-black hover:bg-white hover:text-black transition-colors">
+                    PLAY AGAIN
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
