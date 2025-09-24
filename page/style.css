@@ -226,29 +226,32 @@ body {
     transition: none;
     cursor: grabbing;
     transform: scale(0.95);
+    will-change: transform, left, top;
 }
 
 @media (max-width: 768px) {
     .player {
-        width: 25px;
-        height: 25px;
+        width: 18px;
+        height: 18px;
     }
 
     .key-container {
-        width: 55px;
-        height: 55px;
+        width: 40px;
+        height: 40px;
     }
 
     .cute-character {
-        font-size: 45px;
-        width: 55px;
-        height: 55px;
+        font-size: 24px;
+        width: 40px;
+        height: 40px;
     }
 
     .key {
-        width: 45px;
-        height: 45px;
-        font-size: 20px;
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+        top: 4px;
+        left: 4px;
     }
 
     .joystick-controls {
@@ -256,18 +259,76 @@ body {
     }
 
     .joystick-container {
-        width: 140px;
-        height: 140px;
+        width: 100px;
+        height: 100px;
     }
 
     .joystick-base {
-        width: 120px;
-        height: 120px;
+        width: 80px;
+        height: 80px;
     }
 
     .joystick-handle {
-        width: 50px;
-        height: 50px;
+        width: 32px;
+        height: 32px;
+    }
+
+    /* Start screen mobile optimization */
+    .game-icon {
+        font-size: 3rem !important;
+    }
+
+    h1 {
+        font-size: 2rem !important;
+    }
+
+    .text-lg {
+        font-size: 1rem !important;
+    }
+
+    .px-8 {
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+
+    .py-4 {
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+    }
+
+    .text-xl {
+        font-size: 1.125rem !important;
+    }
+
+    /* Additional mobile spacing */
+    #startPage {
+        padding: 2rem 1rem !important;
+    }
+
+    #startPage .text-center {
+        margin-bottom: 2rem !important;
+    }
+
+    .mb-4 {
+        margin-bottom: 1rem !important;
+    }
+
+    .mb-8 {
+        margin-bottom: 1.5rem !important;
+    }
+
+    /* Game area mobile optimization */
+    #gamePage .p-4 {
+        padding: 0.75rem !important;
+    }
+
+    .text-xs {
+        font-size: 0.75rem !important;
+    }
+
+    /* Hide bottom instruction text on mobile */
+    .p-2.bg-white.border-t-2.border-black {
+        display: none !important;
     }
 }
 
